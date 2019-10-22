@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Your Post</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<style>
+    .masthead {
+        height: 100vh;
+        min-height: 10px;
+        background-image: url('https://source.unsplash.com/BtbjCFUvBXs/1920x1080');
+        background-size: cover;
+        background-position: center;
+        background-repeat: repeat;
+    }
+    .card-body-mid{
+        display: table-cell;
+        line-height:1.5em;
+        height: 9em;
+        vertical-align: middle;
+        overflow:hidden;
+    }
+    img{
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px;
+        height: 100%;
+    }
+</style>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body class="masthead">
+<div th:insert="applypost::nav"></div>
+<div class="container h-100">
+    <div class="row h-100 align-items-center">
+        <div class="col-12 text-center">
+            <h1 class="font-weight-light">Program Description: <span th:text="${program.description}"></span><br /></h1>
+            <p class="lead">Start Date: <span th:text="${program.startdate}"></span><br /></p>
+            <p class="lead">End Date: <span th:text="${program.enddate}"></span><br /></p>
+
+
+
+        <br>
+<!--        <div th:if="${program.checkQualification(myuser)}" sec:authorize="isAuthenticated()" >-->
+            <div th:if="${myuser.qualification.equalsIgnoreCase('Active')}">
+            <button type="button" class="btn btn-outline-primary"><a th:href="@{/enrollprogram/{id}(id=${program.id})}">Enroll</a></button>
+<!--    </div>-->
+            </div>\</div></div></div>
+
+<div th:replace="base :: script"> </div>
+
+</body>
+</html>

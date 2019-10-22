@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="header">
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta selfintroduction="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+
+    <!-- Bootstrap CSS -->
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+
+    <style>
+        .masthead {
+            height: 100vh;
+            min-height: 10px;
+            background-image: url('https://source.unsplash.com/BtbjCFUvBXs/1920x1080');
+            background-size: cover;
+            background-position: center;
+            background-repeat: repeat;
+        }
+        .card-body{
+            background-color: #D6E4AA;
+        }
+        @import url('https://fonts.googleapis.com/css?family=Mansalva&display=swap');
+        @import url('https://fonts.googleapis.com/css?family=Big+Shoulders+Display&display=swap');
+        .card-body{
+            background-color: #6bc5d2;
+            font-size:15px;
+            line-height:1.5em;
+            height: 6em;
+            overflow:hidden;
+        }
+        .card-body-top{
+            background-color: #C6FF33;
+            font-size:15px;
+            line-height:1.5em;
+            height: 3em;
+            text-align: center;
+            overflow:hidden;
+        }
+        .card-body-mid{
+            display: table-cell;
+            line-height:1.5em;
+            height: 9em;
+            vertical-align: middle;
+            overflow:hidden;
+        }
+        img{
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="masthead">
+<div th:fragment="nav">
+    <nav class="navbar navbar-light navbar-expand-sm" style="background-color: #e3f2fd;">
+        <!-- Links -->
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Edx</a>
+            </li>
+            <!--            new feature: show enrollments-->
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+                <a class="nav-link" th:href="@{/enrollment/{id}(id=${myuser.id})}">Show all enrollments</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+                <a class="nav-link" href="/admin">Admin</a>
+            </li>
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+                <a class="nav-link" href="/register">Register</a>
+            </li>
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+
+
+        </ul>
+        <ul class="navbar-nav ml-auto">
+
+            <li class="nav-item active">
+                <form th:action="@{/processsearch}" class="form-inline" method="post">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Search" name="search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </li>
+            <!-- Dropdown -->
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    My Account
+                    <img id="gravatar"
+                         th:alt="gravatar"
+                         th:src="@{'http://gravatar.com/avatar/' + ${mD5Util.md5Hex(myuser.email)} + '?s=20'}">
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/myprofile">Signed in as <span th:text="${#authentication.name}"></span> </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/myprofile">My Profile</a>
+                    <a class="dropdown-item" href="/updateUser">Edit Profile</a>
+                    <!--                    <div class="dropdown-divider"></div>-->
+                    <a class="dropdown-item" href="/followers">Followers</a>
+                    <a class="dropdown-item" href="/following">Following</a>
+                    <!--                    <div class="dropdown-divider"></div>-->
+                    <a class="dropdown-item" href="/logout">Logout</a>
+                </div>
+            </li>
+        </ul>
+
+    </nav>
+</div>
+<div class="card-columns">
+    Welcome,  <span th:text="${myuser.username} "></span><br>
+    Your status is <span th:text="${myuser.qualification} "></span>
+
+<!--                         beza       -->
+<!--        --------- Education Level--------------------------------------- -->
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label> Education Level </label>
+
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
+            <div class="dropdown-menu">
+
+                <a class="dropdown-item" href="#">High School Deploma</a>
+                <a class="dropdown-item" href="#">Bachelors Degree</a>
+                <a class="dropdown-item" href="#">Masters Degree</a>
+                <a class="dropdown-item" href="#">PHD</a>
+                <a class="dropdown-item" href="#">Other</a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Separated link</a>
+            </div>
+        </div>
+        <input type="text" class="form-control" aria-label="Text input with dropdown button">
+    </div>
+    <!--         ------------- Education -------------------------      -->
+
+
+    <form>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Your Major *</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" >
+        </div>
+
+        <div class="form-group">
+            <label for="formGroupExampleInput">Graduation Date or Anticipated Graduation Date *</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" >
+        </div>
+
+        <div class="form-group">
+            <label for="formGroupExampleInput">Name of school you graduated from or are currently attending *</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" >
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput2"> Location of your school (City, State, Country) * </label>
+            <input type="text" class="form-control" id="formGroupExampleInput2" >
+        </div>
+
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Use this text box to briefly explain your technical background. And ask questions. *</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+
+
+    </form>
+
+<!--        -----------------------------Veteran Status -------------------------    -->
+
+    <label >  Veteran Status </label>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+        <label class="form-check-label" for="exampleRadios1">
+            Yes, I am a vetran.
+        </label>
+    </div>
+    <div class="form-check">
+
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+        <label class="form-check-label" for="exampleRadios2">
+            No, I am not a vetran.
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+        <label class="form-check-label" for="exampleRadios2">
+            No, I am not a vetran.
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+        <label class="form-check-label" for="exampleRadios2">
+            I am a vetran spouse.
+        </label>
+    </div>
+
+<!--   --------------------------- Work Status---------------------     -->
+
+    <label >  Employment Status </label>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+        <label class="form-check-label" for="exampleRadios1">
+            Unemployed
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+        <label class="form-check-label" for="exampleRadios2">
+            Uderemployed (making less than $42,000/year)
+        </label>
+    </div>
+<!--    --------------------------- End ---------------------  -->
+
+
+
+
+
+
+</div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>
