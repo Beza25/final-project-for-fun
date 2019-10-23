@@ -49,7 +49,7 @@
         <img id="gravatar"
              th:alt="|${user.firstName}  ${user.lastName}|"
              th:src="@{'http://gravatar.com/avatar/' + ${HASH} + '?s=200'}">
-        <br>
+        <br><br/><br/>
         <div th:if="${user.checkq}">
         <span >
                 <a class="btn btn-info" th:href="@{/questionnairedetail/{id}(id=${questionnaire.id})}">Questionnaire</a>
