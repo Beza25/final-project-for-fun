@@ -104,7 +104,7 @@
 <div class="row">
     <div class="col-75">
         <div class="container">
-            <form method="post"  action="#" th:action="@{/}" th:object="${cart}" enctype="multipart/form-data">
+            <form method="post"  action="#" th:action="@{/pocesscart/{id}(id=${program.id})}" th:object="${cart}" enctype="multipart/form-data">
                 <div class="col-50">
                     <h3>Payment</h3>
 
@@ -113,15 +113,39 @@
                     <label for="price">Total:</label>
                     <p type="text" id="price" name="price">$ <span th:text="${cart.total_price()}"></span></p>
 
+                    <label>Currency:
+                        <select th:field="*{currency}">
+                            <option th:value="USD" th:text="USD"></option>
+                            <option th:value="XX" th:text="XX"></option>
+                        </select></label>
+                    <!--<p>[[${cart.currency}]]</p>-->
+                    <label>Payment Method:
+                        <select th:field="*{method}">
+                            <option th:value="paypal" th:text="paypal"></option>
+                            <option th:value="XX" th:text="XX"></option>
+                        </select>
+                    </label>
+                    <!--<p> [[${cart.method}]]</p>-->
+                    <label>Intent:
+                        <select th:field="*{intent}">
+                            <option th:value="sale" th:text="sale"></option>
+                            <option th:value="XX" th:text="XX"></option>
+                        </select></label>
+                    <!--<p>[[${cart.intent}]]</p>-->
+                    <label>Payment Description:</label>
+                    <!--<p>[[${cart.description}]]</p>-->
+                    <input type="text" th:field="*{description}"/>
 
-                    <input type="submit" value="Continue to checkout" class="btn"></div>
+                    <input type="submit" value="Continue to checkout" class="btn">
+                </div>
+
 
             </form>
 
             <div id="paypal-button-container"></div>
-            <script>
-                paypal.Buttons().render('body');
-            </script>
+<!--            <script>-->
+<!--                paypal.Buttons().render('body');-->
+<!--            </script>-->
         </div>
     </div>
     <div class="col-25">
@@ -136,6 +160,9 @@
         </div>
     </div>
 </div>
-
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>
 </html>

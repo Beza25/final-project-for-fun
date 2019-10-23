@@ -23,6 +23,13 @@ public class Applypost {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime postedDateTime;
 
+//    for paypal
+    private String currency;
+    private String method;
+    private String intent;
+    private String description;
+
+
 //    @NotNull
 //    private String pic;
 
@@ -31,11 +38,24 @@ public class Applypost {
     @ManyToOne
     private User user;
 
+
     public Applypost() {
 //        pic = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/colorful-of-dahlia-pink-flower-in-beautiful-garden-royalty-free-image-825886130-1554743243.jpg?crop=0.669xw:1.00xh;0.331xw,0&resize=640:*";
         postedDateTime = LocalDateTime.now();
         programs=new HashSet();
     }
+
+
+    public Applypost(String currency, String method, String intent, String description, Program program) {
+        this.programs = new HashSet<Program>();
+        this.programs.add(program);
+        this.currency = currency;
+        this.intent = intent;
+        this.method = method;
+        this.description = description;
+    }
+
+
 
     public Applypost(User user) {
         this.postedDateTime = LocalDateTime.now();
@@ -89,6 +109,38 @@ public class Applypost {
 
     public void setPrograms(Set<Program> programs) {
         this.programs = programs;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getIntent() {
+        return intent;
+    }
+
+    public void setIntent(String intent) {
+        this.intent = intent;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

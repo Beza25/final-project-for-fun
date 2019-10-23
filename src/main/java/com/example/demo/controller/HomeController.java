@@ -2,11 +2,17 @@ package com.example.demo.controller;
 
 import com.example.demo.business.config.CloudinaryConfig;
 //import com.example.demo.business.config.CustomerUserDetails;
+import com.example.demo.business.config.PaypalService;
 import com.example.demo.business.config.UserService;
 import com.example.demo.business.data.*;
 import com.example.demo.business.data.repository.*;
 import com.example.demo.business.util.MD5Util;
+import com.paypal.api.payments.Links;
+import com.paypal.api.payments.Payment;
+import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,6 +50,14 @@ public class HomeController {
 
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    PaypalService service;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    public static final String SUCCESS_URL = "pay/success";
+    public static final String CANCEL_URL = "pay/cancel";
 
     @RequestMapping("/")
     public String homePage(Model model) {
@@ -57,16 +71,8 @@ public class HomeController {
         model.addAttribute("mD5Util", new MD5Util());
         return "program";}
 
-    @RequestMapping("/applylist")
-    public String applypostList(Model model) {
 
-        if(userService.getUser()!=null){
-        model.addAttribute("myuser", userService.getUser());
-        }
-        model.addAttribute("applyposts", applypostRepository.findAllByOrderByPostedDateTimeDesc());
-        model.addAttribute("mD5Util", new MD5Util());
-        return "applypost";
-    }
+
 
     @RequestMapping("/admin")
     public String admin(Model model) {
@@ -96,6 +102,14 @@ public class HomeController {
         User myuser=userService.getUser();
         myuser.setCheckq(true);
         userRepository.save(myuser);
+//send email to admin
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("wamysy1990@gmail.com");
+        message.setTo("wamysy1990@gmail.com");
+        message.setSubject(userService.getUser().getUsername()+" applied");
+        message.setText("Please approve or decline");
+
+        mailSender.send(message);
 
         return  "redirect:/";
         }
@@ -122,32 +136,6 @@ public class HomeController {
         return "show";
     }
 
-    @RequestMapping("/update/{id}")
-    public String updateItem(@PathVariable("id") long id, Model model){
-        model.addAttribute("myuser", userService.getUser());
-        model.addAttribute("applypost", applypostRepository.findById(id).get());
-        model.addAttribute("mD5Util", new MD5Util());
-        if (userService.getUser() != null) {
-            model.addAttribute("user", userService.getUser());
-        }
-        Applypost applypost = applypostRepository.findById(id).get();
-        return "questionnaireform";}
-
-    @RequestMapping("/delete/{id}")
-    public String deleteItem(@PathVariable("id") long id){
-        applypostRepository.deleteById(id);
-        return "redirect:/";
-    }
-
-    @PostMapping("/check")
-    public String check(@RequestParam("check") long[] ids,
-                        Model model) {
-        for (long id : ids) {
-            applypostRepository.deleteById(id);
-        }
-
-        return "redirect:/";
-    }
 
 
     @RequestMapping("/myprofile")
@@ -156,7 +144,7 @@ public class HomeController {
         model.addAttribute("user", user);
         model.addAttribute("myuser", user);
         if(user.getQuestionnaire()!=null){
-        model.addAttribute("questionnaire", questionnaireRepository.findByUser(user));}
+            model.addAttribute("questionnaire", questionnaireRepository.findByUser(user));}
         model.addAttribute("HASH", MD5Util.md5Hex(user.getEmail()));
         model.addAttribute("mD5Util", new MD5Util());
         return "profile";
@@ -260,7 +248,8 @@ public class HomeController {
         }
         return "program";
     }
-
+//need to change this method. how to check if a person have made a payment? maybe add a boolean default false, when pay successfully. made it true.
+    //if it's true, create a new cart, false use the old cart.
     @RequestMapping("/enrollprogram/{id}")
     public String enrollprogram(@PathVariable("id") long id,Principal principal, Model model) {
         User myuser = userService.getUser();
@@ -286,18 +275,44 @@ public class HomeController {
         }
         return "check";}
 
-        @RequestMapping("/cart/{id}")
-        public String show_cart(@PathVariable("id") long id, Model model){
-            User myuser = userService.getUser();
-            Program program = programRepository.findById(id).get();
-            model.addAttribute("program", program);
-            model.addAttribute("myuser", myuser);
-            model.addAttribute("mD5Util", new MD5Util());
-            model.addAttribute("HASH", MD5Util.md5Hex(myuser.getEmail()));
-            model.addAttribute("program",program);
-            model.addAttribute("cart", applypostRepository.findAll().iterator().next());
-            return "paymentform";
+    @RequestMapping("/cart/{id}")
+    public String show_cart(@PathVariable("id") long id, Model model){
+        User myuser = userService.getUser();
+        Program program = programRepository.findById(id).get();
+        model.addAttribute("program", program);
+        model.addAttribute("myuser", myuser);
+        model.addAttribute("mD5Util", new MD5Util());
+        model.addAttribute("HASH", MD5Util.md5Hex(myuser.getEmail()));
+        model.addAttribute("program",program);
+        model.addAttribute("cart", applypostRepository.findAll().iterator().next());
+        return "paymentform";
+    }
+
+    @RequestMapping("/pocesscart/{id}")
+    public String processcartForm(@PathVariable("id") long id, Model model, @ModelAttribute Applypost cart) {
+        Program program = programRepository.findById(id).get();
+        model.addAttribute("program", programRepository.findById(id).get());
+
+        try {
+
+            Payment payment = service.createPayment(cart.total_price(), cart.getCurrency(), cart.getMethod(),
+                    cart.getIntent(), cart.getDescription(), "http://localhost:8080/" + CANCEL_URL,
+                    "http://localhost:8080/" + SUCCESS_URL);
+
+
+            for (Links link : payment.getLinks()) {
+                if (link.getRel().equals("approval_url")) {
+                    return "redirect:" + link.getHref();
+                }
+            }
+
+        } catch (PayPalRESTException e) {
+
+            e.printStackTrace();
         }
+
+        return "redirect:/cart/{id}";
+    }
 
     @RequestMapping("/qualifysearch/{id}")
     public String searchqaulify(@PathVariable("id") long id,Model model) {
@@ -310,10 +325,10 @@ public class HomeController {
             if(p.checkQualification(u)) {
                 alllist.add(p);
             }
-            }
-            model.addAttribute("programs", alllist);
-            model.addAttribute("myuser", userService.getUser());
-            model.addAttribute("mD5Util", new MD5Util());
+        }
+        model.addAttribute("programs", alllist);
+        model.addAttribute("myuser", userService.getUser());
+        model.addAttribute("mD5Util", new MD5Util());
         return "program";
     }
 
@@ -335,6 +350,49 @@ public class HomeController {
         return "program";
     }
 
+
+
+    //I don't use it right now. when users submit it, they cannot make change of it
+    @RequestMapping("/update/{id}")
+    public String updateQuestionnaire(@PathVariable("id") long id, Model model){
+        model.addAttribute("myuser", userService.getUser());
+        model.addAttribute("questionnaire", questionnaireRepository.findById(id).get());
+        model.addAttribute("mD5Util", new MD5Util());
+        if (userService.getUser() != null) {
+            model.addAttribute("user", userService.getUser());
+        }
+        Questionnaire questionnaire = questionnaireRepository.findById(id).get();
+        return "questionnaireform";}
+
+    //don't use this right now, applypost html is also have errors
+    @RequestMapping("/applylist")
+    public String applypostList(Model model) {
+
+        if(userService.getUser()!=null){
+            model.addAttribute("myuser", userService.getUser());
+        }
+        model.addAttribute("applyposts", applypostRepository.findAllByOrderByPostedDateTimeDesc());
+        model.addAttribute("mD5Util", new MD5Util());
+        return "applypost";
+    }
+
+    //don't use it now, no one can delete anything.
+    @RequestMapping("/delete/{id}")
+    public String deleteProgram(@PathVariable("id") long id){
+        programRepository.deleteById(id);
+        return "redirect:/";
+    }
+
+    //don't use it now, no one can delete anything.
+    @PostMapping("/check")
+    public String check(@RequestParam("check") long[] ids,
+                        Model model) {
+        for (long id : ids) {
+            applypostRepository.deleteById(id);
+        }
+
+        return "redirect:/";
+    }
 
 
 
