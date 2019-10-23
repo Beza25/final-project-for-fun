@@ -52,7 +52,7 @@
         <br><br/><br/>
         <div th:if="${user.checkq}">
         <span >
-                <a class="btn btn-info" th:href="@{/questionnairedetail/{id}(id=${questionnaire.id})}">Questionnaire</a>
+                <a class="btn btn-info" th:href="@{/questionnairedetail/{id}(id=${user.questionnaire.id})}">Questionnaire</a>
         </span></div>
         <br>
         <span >

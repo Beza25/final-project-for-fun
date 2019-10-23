@@ -106,6 +106,7 @@ public class HomeController {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("wamysy1990@gmail.com");
         message.setTo("wamysy1990@gmail.com");
+        //message.setTo("playrey2010@gmail.com");
         message.setSubject(userService.getUser().getUsername()+" applied");
         message.setText("Please approve or decline");
 
@@ -143,7 +144,7 @@ public class HomeController {
         User user = userService.getUser();
         model.addAttribute("user", user);
         model.addAttribute("myuser", user);
-        if(user.getQuestionnaire()!=null){
+        if(user.isCheckq()){
             model.addAttribute("questionnaire", questionnaireRepository.findByUser(user));}
         model.addAttribute("HASH", MD5Util.md5Hex(user.getEmail()));
         model.addAttribute("mD5Util", new MD5Util());
