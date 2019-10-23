@@ -54,6 +54,10 @@ public class User {
     @Column(name = "experience")
     private boolean experience;
 
+    @Column(name = "checkq")
+    private boolean checkq;
+
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"),
@@ -63,6 +67,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<Applypost> applyposts;
+
+    @OneToOne(mappedBy="user")
+    private Questionnaire questionnaire;
 
 
     //For followers and following
@@ -83,6 +90,8 @@ public class User {
         followers = new HashSet<>();
         followings = new HashSet<>();
         qualification= "Pending";
+        checkq=false;
+
     }
 
     public User(@NotEmpty @Email String email,
@@ -241,7 +250,21 @@ public class User {
         //followed.removeFollower(this);
     }
 
+    public Questionnaire getQuestionnaire() {
+        return questionnaire;
+    }
 
+    public void setQuestionnaire(Questionnaire questionnaire) {
+        this.questionnaire = questionnaire;
+    }
+
+    public boolean isCheckq() {
+        return checkq;
+    }
+
+    public void setCheckq(boolean checkq) {
+        this.checkq = checkq;
+    }
 
     @Override
     public String toString() {

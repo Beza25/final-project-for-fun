@@ -10,7 +10,6 @@ public interface ApplypostRepository extends CrudRepository<Applypost, Long>
 {
 
         Iterable<Applypost> findAllByOrderByPostedDateTimeDesc();
-        ArrayList<Applypost> findBySelfintroductionContainingIgnoreCase(String s1);
         ArrayList<Applypost> findAll();
         ArrayList<Applypost> findByUser(User u);
 

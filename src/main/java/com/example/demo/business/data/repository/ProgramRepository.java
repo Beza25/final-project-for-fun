@@ -1,6 +1,5 @@
 package com.example.demo.business.data.repository;
 
-import com.example.demo.business.data.Applypost;
 import com.example.demo.business.data.Program;
 import org.springframework.data.repository.CrudRepository;
 

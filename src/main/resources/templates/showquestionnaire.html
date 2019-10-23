@@ -104,8 +104,8 @@
                     <a class="dropdown-item" href="/myprofile">My Profile</a>
                     <a class="dropdown-item" href="/updateUser">Edit Profile</a>
                     <!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a class="dropdown-item" href="/followers">Followers</a>-->
-<!--                    <a class="dropdown-item" href="/following">Following</a>-->
+                    <a class="dropdown-item" href="/followers">Followers</a>
+                    <a class="dropdown-item" href="/following">Following</a>
                     <!--                    <div class="dropdown-divider"></div>-->
                     <a class="dropdown-item" href="/logout">Logout</a>
                 </div>
@@ -115,26 +115,17 @@
     </nav>
 </div>
 <div class="card-columns">
-    <div th:each ="applypost:${applyposts}">
-    <div class="card">
-        <div class="card-body-top text-center font-weight-bolder">
-            <p class="card-text">Posted by:  <strong>
-                <a th:href="@{/user/{id}(id=*{applypost.user.id})}" th:inline="text">[[*{applypost.user.username}]]</a>
-            </strong></p>
 
-        </div>
-
-        <div class="card-body">
-            <p class="card-text"><span th:text="${applypost.selfintroduction} "></span></p>
-        </div>
-        <a th:href="@{/detail/{id}(id=${applypost.id})}"> Details</a>
-        <div th:if="${applypost.user.id==myuser.id}" sec:authorize="isAuthenticated()" ><a th:href="@{/update/{id}(id=${applypost.id})}"> Update</a>
-
-            <a th:href="@{/delete/{id}(id=${applypost.id})}"> Delete</a>
-    </div>
-    </div></div>
-
-    </div>
+    <p>Education Level: <span th:text="${questionnaire.educationLevel} "></span></p>
+    <p>Work Status: <span th:text="${questionnaire.workStatus} "></span></p>
+    <p>Your Major: <span th:text="${questionnaire.yourMajor} "></span></p>
+    <p>Graduation Date: <span th:text="${questionnaire.graduationDate} "></span></p>
+    <p>School: <span th:text="${questionnaire.school} "></span></p>
+    <p>Education Level: <span th:text="${questionnaire.schoolLocation} "></span></p>
+    <p>Veteran: <span th:text="${questionnaire.veteran} "></span></p>
+    <p>Technical Background: <span th:text="${questionnaire.technicalBackground} "></span></p>
+    <p>Self Introduction: <span th:text="${questionnaire.selfintroduction} "></span></p>
+</div>
 
 
 </div>

@@ -3,10 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.business.config.CloudinaryConfig;
 //import com.example.demo.business.config.CustomerUserDetails;
 import com.example.demo.business.config.UserService;
-import com.example.demo.business.data.Applypost;
-import com.example.demo.business.data.Org;
-import com.example.demo.business.data.Program;
-import com.example.demo.business.data.User;
+import com.example.demo.business.data.*;
 import com.example.demo.business.data.repository.*;
 import com.example.demo.business.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.validation.constraints.Null;
 import java.security.Principal;
 import java.util.*;
 
@@ -40,6 +38,12 @@ public class HomeController {
 
     @Autowired
     CloudinaryConfig cloudc;
+
+    @Autowired
+    QuestionnaireRepository questionnaireRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @RequestMapping("/")
     public String homePage(Model model) {
@@ -77,28 +81,35 @@ public class HomeController {
         model.addAttribute("myuser", userService.getUser());
         model.addAttribute("user", userService.getUser());
         model.addAttribute("mD5Util", new MD5Util());
-        model.addAttribute("applypost", new Applypost());
-        return "applypostform";
+        model.addAttribute("questionnaire", new Questionnaire());
+        return "questionnaireform";
     }
 
 
-    @Autowired
-    RoleRepository roleRepository;
-
     @PostMapping("/process")
-    public String processForm(@ModelAttribute Applypost applypost, BindingResult result,
-                              @RequestParam("file") MultipartFile file, @RequestParam String pic, Model model) {
+    public String processForm(@ModelAttribute Questionnaire questionnaire,Model model) {
         model.addAttribute("myuser", userService.getUser());
         model.addAttribute("user", userService.getUser());
         model.addAttribute("mD5Util", new MD5Util());
-        //check for errors on the form
-        if (result.hasErrors()) {
-            return "applypostform";
+        questionnaire.setUser(userService.getUser());
+        questionnaireRepository.save(questionnaire);
+        User myuser=userService.getUser();
+        myuser.setCheckq(true);
+        userRepository.save(myuser);
+
+        return  "redirect:/";
         }
-            applypost.setUser(userService.getUser());
-            applypostRepository.save(applypost);
-            return  "redirect:/";
+
+    @RequestMapping("/questionnairedetail/{id}")
+    public String showQuestionnaire(@PathVariable("id") long id, Model model){
+        model.addAttribute("myuser", userService.getUser());
+        model.addAttribute("questionnaire", questionnaireRepository.findById(id).get());
+        model.addAttribute("mD5Util", new MD5Util());
+        if (userService.getUser() != null) {
+            model.addAttribute("user_id", userService.getUser().getId());
         }
+        return "showquestionnaire";
+    }
 
     @RequestMapping("/detail/{id}")
     public String showProgram(@PathVariable("id") long id, Model model){
@@ -120,7 +131,7 @@ public class HomeController {
             model.addAttribute("user", userService.getUser());
         }
         Applypost applypost = applypostRepository.findById(id).get();
-        return "applypostform";}
+        return "questionnaireform";}
 
     @RequestMapping("/delete/{id}")
     public String deleteItem(@PathVariable("id") long id){
@@ -144,6 +155,8 @@ public class HomeController {
         User user = userService.getUser();
         model.addAttribute("user", user);
         model.addAttribute("myuser", user);
+        if(user.getQuestionnaire()!=null){
+        model.addAttribute("questionnaire", questionnaireRepository.findByUser(user));}
         model.addAttribute("HASH", MD5Util.md5Hex(user.getEmail()));
         model.addAttribute("mD5Util", new MD5Util());
         return "profile";

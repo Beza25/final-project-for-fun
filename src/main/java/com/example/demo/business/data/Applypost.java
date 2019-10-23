@@ -19,21 +19,6 @@ public class Applypost {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String selfintroduction;
-
-
-
-    private String educationLevel;
-    private String workStatus;
-    private String yourMajor;
-    private String graduationDate; // maybe change it to date
-    private String school;
-    private String schoolLocation;
-    private String veteran;
-    private String technicalBackground;
-
-
-
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime postedDateTime;
@@ -98,14 +83,6 @@ public class Applypost {
         this.user = user;
     }
 
-    public String getSelfintroduction() {
-        return selfintroduction;
-    }
-
-    public void setSelfintroduction(String selfintroduction) {
-        this.selfintroduction = selfintroduction;
-    }
-
     public Set<Program> getPrograms() {
         return programs;
     }
@@ -139,67 +116,4 @@ public class Applypost {
         return sum;
     }
 
-    public String getEducationLevel() {
-        return educationLevel;
-    }
-
-    public void setEducationLevel(String educationLevel) {
-        this.educationLevel = educationLevel;
-    }
-
-    public String getWorkStatus() {
-        return workStatus;
-    }
-
-    public void setWorkStatus(String workStatus) {
-        this.workStatus = workStatus;
-    }
-
-    public String getYourMajor() {
-        return yourMajor;
-    }
-
-    public void setYourMajor(String yourMajor) {
-        this.yourMajor = yourMajor;
-    }
-
-    public String getGraduationDate() {
-        return graduationDate;
-    }
-
-    public void setGraduationDate(String graduationDate) {
-        this.graduationDate = graduationDate;
-    }
-
-    public String getSchool() {
-        return school;
-    }
-
-    public void setSchool(String school) {
-        this.school = school;
-    }
-
-    public String getSchoolLocation() {
-        return schoolLocation;
-    }
-
-    public void setSchoolLocation(String schoolLocation) {
-        this.schoolLocation = schoolLocation;
-    }
-
-    public String getVeteran() {
-        return veteran;
-    }
-
-    public void setVeteran(String veteran) {
-        this.veteran = veteran;
-    }
-
-    public String getTechnicalBackground() {
-        return technicalBackground;
-    }
-
-    public void setTechnicalBackground(String technicalBackground) {
-        this.technicalBackground = technicalBackground;
-    }
-}
+   }
